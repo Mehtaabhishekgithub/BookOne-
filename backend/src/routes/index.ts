@@ -2,6 +2,8 @@ import { Router } from "express";
 import healthRouter from "./health.routes.js";
 import webhookRouter from "./webhook.routes.js";
 import userRouter from "./user.routes.js";
+import providerRouter from "./provider.routes.js";
+import publicRouter from "./public.routes.js";
 
 const apiRouter = Router();
 
@@ -9,5 +11,7 @@ const apiRouter = Router();
 apiRouter.use("/", healthRouter);
 apiRouter.use("/webhooks", webhookRouter);
 apiRouter.use("/users", userRouter);
+apiRouter.use("/provider", providerRouter);
+apiRouter.use("/public", publicRouter);
 
 export default apiRouter;
