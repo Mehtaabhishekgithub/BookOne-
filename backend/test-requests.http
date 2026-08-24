@@ -1,0 +1,56 @@
+### Variables
+@baseUrl = http://localhost:5000/api
+@mockProviderClerkId = user_mock_provider_01
+@mockClientClerkId = user_mock_client_01
+
+### 1. Health Check
+GET {{baseUrl}}/health
+
+### 2. Public Provider Profile
+# @name getPublicProfile
+GET {{baseUrl}}/public/alex-morgan
+
+### 3. Public Available Slots (Timezone-Safe Calculation)
+# Paste a serviceId from the response of #2 above into serviceId query param:
+GET {{baseUrl}}/public/alex-morgan/slots?serviceId=REPLACE_WITH_SERVICE_ID&date=2026-08-25&timezone=Asia/Kolkata
+
+### 4. Authenticated User Profile (Current User)
+GET {{baseUrl}}/users/me
+x-user-clerk-id: {{mockProviderClerkId}}
+
+### 5. Provider Services List
+GET {{baseUrl}}/provider/services
+x-user-clerk-id: {{mockProviderClerkId}}
+
+### 6. Provider Create Service
+POST {{baseUrl}}/provider/services
+Content-Type: application/json
+x-user-clerk-id: {{mockProviderClerkId}}
+
+{
+  "title": "45-Min System Design & Strategy Review",
+  "description": "Interactive architectural review and scaling recommendations.",
+  "durationMinutes": 45,
+  "price": 120.00,
+  "currency": "USD",
+  "isActive": true
+}
+
+### 7. Provider Availability Schedule
+GET {{baseUrl}}/provider/availability
+x-user-clerk-id: {{mockProviderClerkId}}
+
+### 8. Provider Update Weekly Working Hours
+PUT {{baseUrl}}/provider/availability
+Content-Type: application/json
+x-user-clerk-id: {{mockProviderClerkId}}
+
+{
+  "availabilities": [
+    { "dayOfWeek": 1, "startTime": "09:00", "endTime": "17:00" },
+    { "dayOfWeek": 2, "startTime": "09:00", "endTime": "17:00" },
+    { "dayOfWeek": 3, "startTime": "09:00", "endTime": "17:00" },
+    { "dayOfWeek": 4, "startTime": "09:00", "endTime": "17:00" },
+    { "dayOfWeek": 5, "startTime": "10:00", "endTime": "16:00" }
+  ]
+}
