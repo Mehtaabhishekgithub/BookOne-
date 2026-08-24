@@ -1,9 +1,13 @@
 import { Router } from "express";
 import healthRouter from "./health.routes.js";
+import webhookRouter from "./webhook.routes.js";
+import userRouter from "./user.routes.js";
 
 const apiRouter = Router();
 
 // Mount sub-routes
 apiRouter.use("/", healthRouter);
+apiRouter.use("/webhooks", webhookRouter);
+apiRouter.use("/users", userRouter);
 
 export default apiRouter;

@@ -2,25 +2,34 @@ import express, { Express, Request, Response, NextFunction } from "express";
 import cors from "cors";
 import morgan from "morgan";
 import apiRouter from "./routes/index.js";
+import { authenticate } from "./middleware/auth.middleware.js";
 
 export function createApp(): Express {
   const app = express();
 
-  // Middleware
+  // CORS configuration
   app.use(
     cors({
       origin: process.env.FRONTEND_URL || "http://localhost:5173",
       credentials: true,
     })
   );
-  
-  // Note: Webhook routes will need raw bodies for cryptographic signatures;
-  // standard json parsing is applied here, while webhooks will use custom body parser.
-  app.use(express.json());
+
+  // Parse raw body for webhook signature verification (Svix / Stripe)
+  app.use(
+    express.json({
+      verify: (req: Request, _res: Response, buf: Buffer) => {
+        (req as any).rawBody = buf;
+      },
+    })
+  );
   app.use(express.urlencoded({ extended: true }));
   app.use(morgan("dev"));
 
-  // API Routes
+  // Global user resolution middleware
+  app.use("/api", authenticate);
+
+  // Mount API Routes
   app.use("/api", apiRouter);
 
   // 404 Handler
