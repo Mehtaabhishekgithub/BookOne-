@@ -1,5 +1,4 @@
 import { PrismaClient, Role, BookingStatus, InvoiceStatus } from "@prisma/client";
-import process from "node:process";
 
 const prisma = new PrismaClient();
 
@@ -139,7 +138,7 @@ async function main() {
 main()
   .catch((e) => {
     console.error("❌ Seeding failed:", e);
-    process.exit(1);
+    throw e;
   })
   .finally(async () => {
     await prisma.$disconnect();
