@@ -1,5 +1,5 @@
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -45,7 +45,7 @@ model ProviderProfile {
   user         User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   handle       String         @unique // Public slug: e.g. "john-doe"
   headline     String?
-  bio          String?
+  bio          String?        @db.Text
   timezone     String         @default("UTC")
   createdAt    DateTime       @default(now())
 
@@ -59,7 +59,7 @@ model Service {
   providerId      String
   provider        ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
   title           String
-  description     String?
+  description     String?         @db.Text
   durationMinutes Int             // e.g. 30, 45, 60
   price           Decimal         @db.Decimal(10, 2)
   currency        String          @default("USD")
