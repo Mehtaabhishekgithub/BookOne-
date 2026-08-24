@@ -6,7 +6,57 @@
 ### 1. Health Check
 GET {{baseUrl}}/health
 
-### 2. Public Provider Profile
+### 2. User Sign-Up via Clerk Webhook Simulation
+POST {{baseUrl}}/webhooks/clerk
+Content-Type: application/json
+
+{
+  "type": "user.created",
+  "data": {
+    "id": "user_clerk_test_1001",
+    "first_name": "David",
+    "last_name": "Miller",
+    "primary_email_address_id": "email_1001",
+    "email_addresses": [
+      {
+        "id": "email_1001",
+        "email_address": "david.miller@example.com"
+      }
+    ],
+    "public_metadata": {
+      "role": "CLIENT"
+    }
+  }
+}
+
+### 3. User Sign-Up via Frontend Direct Sync Endpoint
+POST {{baseUrl}}/users/sync
+Content-Type: application/json
+
+{
+  "clerkId": "user_clerk_test_2002",
+  "email": "emily.watson@example.com",
+  "firstName": "Emily",
+  "lastName": "Watson",
+  "role": "CLIENT"
+}
+
+### 4. Verify Signed-Up User (Me)
+GET {{baseUrl}}/users/me
+x-user-clerk-id: user_clerk_test_2002
+
+### 5. Upgrade User to Provider & Set Public Handle
+POST {{baseUrl}}/users/role
+Content-Type: application/json
+x-user-clerk-id: user_clerk_test_2002
+
+{
+  "role": "PROVIDER",
+  "handle": "emily-consulting",
+  "timezone": "America/New_York"
+}
+
+### 6. Public Provider Profile
 # @name getPublicProfile
 GET {{baseUrl}}/public/alex-morgan
 
