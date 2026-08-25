@@ -21,13 +21,15 @@ export const Navbar: React.FC = () => {
 
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
-  // Fetch logged in user profile
-  const { data: userData } = useGetMeQuery();
-  const user = userData?.data;
-
   // Active dev user ID
   const activeClerkId = localStorage.getItem("bookone_clerk_id");
-  const isSignedOut = activeClerkId === "signed_out" || (!user && activeClerkId !== null);
+  const isSignedOut = activeClerkId === "signed_out";
+
+  // Fetch logged in user profile (skip if signed out)
+  const { data: userData } = useGetMeQuery(undefined, {
+    skip: isSignedOut,
+  });
+  const user = isSignedOut ? null : userData?.data;
 
   const handleSwitchUser = (clerkId: string) => {
     localStorage.setItem("bookone_clerk_id", clerkId);
