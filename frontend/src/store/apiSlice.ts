@@ -8,9 +8,17 @@ import {
   AvailableSlotsResponse,
 } from "../types/index.js";
 
-// Helper to get active clerk ID header (defaults to mock provider for easy live demo)
+// Helper to get active clerk ID header (supports signed_out state)
 const getDevClerkHeader = () => {
-  return localStorage.getItem("bookone_clerk_id") || "user_mock_provider_01";
+  const storedId = localStorage.getItem("bookone_clerk_id");
+  if (storedId === "signed_out" || storedId === "guest") {
+    return null;
+  }
+  // Default on first visit to provider
+  if (!storedId) {
+    return "user_mock_provider_01";
+  }
+  return storedId;
 };
 
 export const apiSlice = createApi({

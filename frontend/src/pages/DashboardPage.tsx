@@ -28,6 +28,7 @@ import {
   Loader2,
   AlertCircle,
   Save,
+  Shield,
 } from "lucide-react";
 import { format } from "date-fns";
 
@@ -116,6 +117,39 @@ export const DashboardPage: React.FC = () => {
       <div className="min-h-[80vh] flex flex-col items-center justify-center gap-3">
         <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
         <p className="text-sm font-medium text-slate-500">Loading Provider Dashboard...</p>
+      </div>
+    );
+  }
+
+  // Handle Client role attempting to view Provider Dashboard
+  if (!profile) {
+    return (
+      <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 text-center">
+        <div className="w-16 h-16 rounded-3xl bg-indigo-50 text-indigo-600 flex items-center justify-center mb-4 ring-8 ring-indigo-50/50">
+          <Shield className="w-8 h-8" />
+        </div>
+        <h2 className="text-2xl font-bold text-slate-900">Provider Account Required</h2>
+        <p className="text-sm text-slate-600 mt-2 max-w-md">
+          You are currently signed in as a <strong>Client</strong> or in guest mode. The Dashboard is reserved for Service Providers.
+        </p>
+
+        <div className="mt-6 flex flex-col sm:flex-row items-center gap-3">
+          <button
+            onClick={() => {
+              localStorage.setItem("bookone_clerk_id", "user_mock_provider_01");
+              window.location.reload();
+            }}
+            className="px-6 py-3 rounded-xl bg-indigo-600 text-white text-xs font-bold shadow-md hover:bg-indigo-700 transition-all"
+          >
+            Switch to Demo Provider (Alex Morgan)
+          </button>
+          <a
+            href="/p/alex-morgan"
+            className="px-6 py-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 transition-all"
+          >
+            Go to Client Booking Portal
+          </a>
+        </div>
       </div>
     );
   }
