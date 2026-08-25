@@ -33,19 +33,22 @@ export interface AvailableSlotsResponse {
  */
 export async function calculateAvailableSlots(params: {
   providerId: string;
-  serviceId: string;
+  serviceId?: string;
   dateStr: string; // "YYYY-MM-DD"
   clientTimezone: string; // e.g. "Asia/Kolkata", "America/New_York"
 }): Promise<AvailableSlotsResponse> {
   const { providerId, serviceId, dateStr, clientTimezone } = params;
 
-  // 1. Fetch Provider Profile and Service
+  // 1. Fetch Provider Profile and Services
   const provider = await prisma.providerProfile.findUnique({
     where: { id: providerId },
     include: {
       availabilities: true,
       services: {
-        where: { id: serviceId, isActive: true },
+        where: {
+          isActive: true,
+          ...(serviceId && { id: serviceId }),
+        },
       },
     },
   });
@@ -56,7 +59,7 @@ export async function calculateAvailableSlots(params: {
 
   const service = provider.services[0];
   if (!service) {
-    throw new Error("Service not found or is currently inactive.");
+    throw new Error(serviceId ? `Service with ID '${serviceId}' not found or inactive.` : "Provider has no active services.");
   }
 
   const providerTimezone = provider.timezone || "UTC";

@@ -4,6 +4,7 @@ import webhookRouter from "./webhook.routes.js";
 import userRouter from "./user.routes.js";
 import providerRouter from "./provider.routes.js";
 import publicRouter from "./public.routes.js";
+import invoiceRouter from "./invoice.routes.js";
 
 const apiRouter = Router();
 
@@ -13,5 +14,6 @@ apiRouter.use("/webhooks", webhookRouter);
 apiRouter.use("/users", userRouter);
 apiRouter.use("/provider", providerRouter);
 apiRouter.use("/public", publicRouter);
+apiRouter.use("/invoices", invoiceRouter);
 
 export default apiRouter;

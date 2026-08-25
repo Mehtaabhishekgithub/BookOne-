@@ -60,19 +60,56 @@ x-user-clerk-id: user_clerk_test_2002
 # @name getPublicProfile
 GET {{baseUrl}}/public/alex-morgan
 
-### 3. Public Available Slots (Timezone-Safe Calculation)
-# Paste a serviceId from the response of #2 above into serviceId query param:
-GET {{baseUrl}}/public/alex-morgan/slots?serviceId=REPLACE_WITH_SERVICE_ID&date=2026-08-25&timezone=Asia/Kolkata
+### 7. Public Available Slots (Timezone-Safe Calculation)
+GET {{baseUrl}}/public/alex-morgan/slots?date=2026-08-26&timezone=Asia/Kolkata
 
-### 4. Authenticated User Profile (Current User)
-GET {{baseUrl}}/users/me
-x-user-clerk-id: {{mockProviderClerkId}}
+### 8. Initiate Stripe Checkout Session (Lock Slot & Get Payment URL)
+# @name createCheckout
+POST {{baseUrl}}/public/checkout/session
+Content-Type: application/json
 
-### 5. Provider Services List
+{
+  "providerHandle": "alex-morgan",
+  "serviceId": "REPLACE_WITH_SERVICE_ID",
+  "startTimeUTC": "2026-08-26T14:00:00.000Z",
+  "endTimeUTC": "2026-08-26T14:30:00.000Z",
+  "clientName": "Michael Scott",
+  "clientEmail": "michael.scott@example.com",
+  "clientTimezone": "America/New_York"
+}
+
+### 9. Simulate Stripe Webhook: checkout.session.completed (Confirm Booking & Issue Invoice)
+POST {{baseUrl}}/webhooks/stripe
+Content-Type: application/json
+
+{
+  "type": "checkout.session.completed",
+  "data": {
+    "object": {
+      "id": "cs_test_mock_12345678",
+      "payment_status": "paid",
+      "metadata": {
+        "bookingId": "REPLACE_WITH_BOOKING_ID"
+      }
+    }
+  }
+}
+
+### 10. Check Booking Status & Invoice Details
+GET {{baseUrl}}/public/bookings/234154f3-1693-4670-8cd4-0209ad1ae4a6
+
+### 11. Download Dynamic PDF Invoice (Streams PDF buffer directly)
+# Open this URL directly in your browser: http://localhost:5000/api/invoices/INV-2026-0002/download
+GET {{baseUrl}}/invoices/INV-2026-0002/download
+
+### 12. View Invoice JSON Data
+GET {{baseUrl}}/invoices/INV-2026-0002
+
+### 11. Provider Services List
 GET {{baseUrl}}/provider/services
 x-user-clerk-id: {{mockProviderClerkId}}
 
-### 6. Provider Create Service
+### 12. Provider Create Service
 POST {{baseUrl}}/provider/services
 Content-Type: application/json
 x-user-clerk-id: {{mockProviderClerkId}}
@@ -86,11 +123,11 @@ x-user-clerk-id: {{mockProviderClerkId}}
   "isActive": true
 }
 
-### 7. Provider Availability Schedule
+### 13. Provider Availability Schedule
 GET {{baseUrl}}/provider/availability
 x-user-clerk-id: {{mockProviderClerkId}}
 
-### 8. Provider Update Weekly Working Hours
+### 14. Provider Update Weekly Working Hours
 PUT {{baseUrl}}/provider/availability
 Content-Type: application/json
 x-user-clerk-id: {{mockProviderClerkId}}
